@@ -4,6 +4,7 @@ import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Table;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -67,6 +68,7 @@ public class Window extends JFrame {
 	public Window() {
 		setSize(500, 280);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setTitle("Cars Eletric Station");
 	}
 
 	public void init() {
@@ -157,7 +159,6 @@ public class Window extends JFrame {
 	}
 
 	public void loadData() {
-		// TODO Auto-generated method stub
 		tableModel.setRowCount(0);
 		List<EletricStation> list = new StationDao().showAll();
 		list.forEach(station -> tableModel.addRow(station.getData()));

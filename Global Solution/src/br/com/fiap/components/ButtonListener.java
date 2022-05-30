@@ -17,8 +17,8 @@ public class ButtonListener implements ActionListener, MouseListener {
 	private Window window;
 	StationDao dao = new StationDao();
 
-	public ButtonListener(Window janela) {
-		this.window = janela;
+	public ButtonListener(Window window) {
+		this.window = window;
 	}
 
 	@Override
@@ -43,6 +43,7 @@ public class ButtonListener implements ActionListener, MouseListener {
 			if (answer == JOptionPane.YES_OPTION) {
 				JTable table = (JTable) e.getSource();
 				String id = (String) table.getValueAt(table.getSelectedRow(), 0);
+				dao.delete(Long.valueOf(id));
 				window.loadData();
 			}
 		}
@@ -50,25 +51,21 @@ public class ButtonListener implements ActionListener, MouseListener {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 

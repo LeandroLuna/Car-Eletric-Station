@@ -7,8 +7,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "eletricstation")
 public class EletricStation {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,7 +61,11 @@ public class EletricStation {
 	}
 
 	public void setState(String state) {
-		this.state = state;
+		if (state == "Pick one") {
+			this.state = "";
+		} else {
+			this.state = state;
+		}
 	}
 
 	public Long getRating() {
@@ -99,7 +105,7 @@ public class EletricStation {
 		// removes brackets
 		data.add(carPlug.substring(1, carPlug.length() - 1)); // Creates a sub-string removing the last and
 																// initial brackets
-		data.add("priceKWh");
+		data.add(String.valueOf(priceKwh));
 		data.add(getRating().toString());
 
 		return data;
