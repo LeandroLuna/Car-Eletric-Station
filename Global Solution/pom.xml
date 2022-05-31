@@ -28,6 +28,12 @@
     	<artifactId>h2</artifactId>
     	<version>2.1.212</version>
 	</dependency>
+	<!-- https://mvnrepository.com/artifact/de.pentabyte/google-static-map-creator -->
+	<dependency> <!-- Not using ATM! -->
+    	<groupId>de.pentabyte</groupId>
+    	<artifactId>google-static-map-creator</artifactId>
+   	    <version>2.3.0</version>
+	</dependency>
   </dependencies>
 </project>
 

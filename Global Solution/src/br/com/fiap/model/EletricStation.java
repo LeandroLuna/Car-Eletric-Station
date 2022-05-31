@@ -23,7 +23,7 @@ public class EletricStation {
 	private int rating;
 	private String carPlug;
 	private float priceKwh;
-
+		
 	public String getStationName() {
 		return stationName;
 	}
@@ -68,8 +68,8 @@ public class EletricStation {
 		}
 	}
 
-	public Long getRating() {
-		return (long) rating;
+	public int getRating() {
+		return rating;
 	}
 
 	public void setRating(int rating) {
@@ -93,7 +93,6 @@ public class EletricStation {
 	}
 
 	public Vector<String> getData() {
-
 		Vector<String> data = new Vector<String>();
 		data.add(id.toString());
 		data.add(stationName);
@@ -101,12 +100,10 @@ public class EletricStation {
 		data.add(neighborhood);
 		data.add(city);
 		data.add(state);
-		// data.add(carPlug.replace("[", "").replace("]", "")); // .replace
-		// removes brackets
 		data.add(carPlug.substring(1, carPlug.length() - 1)); // Creates a sub-string removing the last and
 																// initial brackets
 		data.add(String.valueOf(priceKwh));
-		data.add(getRating().toString());
+		data.add(String.valueOf(rating));
 
 		return data;
 	}

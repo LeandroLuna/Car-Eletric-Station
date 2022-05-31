@@ -1,10 +1,10 @@
 package br.com.fiap.views;
 
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Table;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -14,12 +14,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 
-import br.com.fiap.components.ButtonListener;
 import br.com.fiap.components.Input;
 import br.com.fiap.components.Label;
 import br.com.fiap.components.StarRater;
+import br.com.fiap.controller.ButtonController;
+import br.com.fiap.controller.TableController;
 import br.com.fiap.dao.StationDao;
 import br.com.fiap.model.EletricStation;
 
@@ -60,20 +62,27 @@ public class Window extends JFrame {
 	JButton save = new JButton("Save");
 	JButton cancel = new JButton("Cancel");
 
-	ButtonListener buttonListener = new ButtonListener(this);
+	ButtonController buttonController = new ButtonController(this);
 	String[] columns = { "Id", "StationName", "Street", "Neighborhood", "City", "State", "Plug", "PriceKwh", "Rating" };
 	DefaultTableModel tableModel = new DefaultTableModel(columns, 0);
 	JTable table = new JTable(tableModel);
-
+	TableController tableController = new TableController(this);
+	 
+	JPanel tablePanel = new JPanel(new BorderLayout());
+	JButton orderStates = new JButton("Order by states!");
+	
 	public Window() {
-		setSize(500, 280);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch(Exception ignored){			
+		}
+		setSize(790, 280);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setTitle("Cars Eletric Station");
 	}
 
 	public void init() {
 		register.setBorder(BorderFactory.createTitledBorder("Eletric Station Register"));
-
 		address.setBorder(BorderFactory.createTitledBorder("Info"));
 		address.add(name);
 		address.add(nameInput);
@@ -94,30 +103,39 @@ public class Window extends JFrame {
 		carPlug.add(chaDeMo);
 		register.add(carPlug);
 
-		others.setBorder(BorderFactory.createTitledBorder("Others"));
+		others.setBorder(BorderFactory.createTitledBorder("Additional"));
 		others.add(priceKwh);
 		others.add(priceKwhInput);
 		others.add(ratingLabel);
 		others.add(rating);
+		save.setActionCommand("Save");
+		save.addActionListener(buttonController);
+		cancel.setActionCommand("Cancel");
+		cancel.addActionListener(buttonController);
 		buttons.add(save);
 		buttons.add(cancel);
 		others.add(buttons);
 		register.add(others);
 
+		orderStates.setActionCommand("Order");
+		orderStates.addActionListener(buttonController);
+		tablePanel.add(orderStates, BorderLayout.SOUTH);
+		table.addMouseListener(tableController);
+		table.setDefaultEditor(Object.class, null);
+		tablePanel.add(new JScrollPane(table));
+
 		tabs.add("Register", register);
-
-		save.addActionListener(buttonListener);
-
-		tabs.add("List", new JScrollPane(table));
-		tabs.add("Maps", new Label("another text"));
+		tabs.add("List", tablePanel);
+		//tabs.add("Maps", new JLabel("https://github.com/hoereth/google-static-map-creator"));			
 		this.add(tabs);
 		setVisible(true);
+		
 	}
 
 	public Input getNameInput() {
 		return nameInput;
 	}
-
+	
 	public Input getStreetInput() {
 		return streetInput;
 	}
@@ -134,13 +152,9 @@ public class Window extends JFrame {
 		return statesSelector;
 	}
 
-	// public JCheckBox getCarPlug() {
-	// return carPlug;
-	// }
-
 	public List<String> getCheckedboxes() {
-		for (java.awt.Component child : carPlug.getComponents()) {
-			if (child instanceof JCheckBox) {
+		for (java.awt.Component child : carPlug.getComponents()) { // Get all components from carPlug panel
+			if (child instanceof JCheckBox) { // Get all JCheckbox instances from specified panel (carPlug) 
 				JCheckBox checkBox = (JCheckBox) child;
 				if (checkBox.isSelected()) {
 					checkedBoxes.add(checkBox.getText());
@@ -157,10 +171,31 @@ public class Window extends JFrame {
 	public StarRater getRating() {
 		return rating;
 	}
+	
+	public void cleanData(){
+		nameInput.setText("");
+		streetInput.setText("");
+		neighborhoodInput.setText("");
+		cityInput.setText("");
+		statesSelector.setSelectedIndex(0);
+		type1.setSelected(false);
+		type2.setSelected(false);
+		css2.setSelected(false);
+		chaDeMo.setSelected(false);
+		priceKwhInput.setText("");
+		rating.setSelection(0);
+	}
 
 	public void loadData() {
 		tableModel.setRowCount(0);
 		List<EletricStation> list = new StationDao().showAll();
 		list.forEach(station -> tableModel.addRow(station.getData()));
 	}
+	
+	public void loadDataOrdered() {
+		tableModel.setRowCount(0);
+		List<EletricStation> list = new StationDao().orderByStates();
+		list.forEach(station -> tableModel.addRow(station.getData()));
+	}
+	
 }
