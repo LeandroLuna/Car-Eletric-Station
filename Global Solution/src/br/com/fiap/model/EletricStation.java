@@ -23,7 +23,7 @@ public class EletricStation {
 	private int rating;
 	private String carPlug;
 	private float priceKwh;
-		
+
 	public String getStationName() {
 		return stationName;
 	}
@@ -114,5 +114,4 @@ public class EletricStation {
 				+ neighborhood + ", city=" + city + ", state=" + state + ", carPlug="
 				+ carPlug + ", priceKwh=" + priceKwh + ", rating=" + rating + "]";
 	}
-
 }

@@ -67,14 +67,15 @@ public class Window extends JFrame {
 	DefaultTableModel tableModel = new DefaultTableModel(columns, 0);
 	JTable table = new JTable(tableModel);
 	TableController tableController = new TableController(this);
-	 
+
 	JPanel tablePanel = new JPanel(new BorderLayout());
 	JButton orderStates = new JButton("Order by states!");
-	
+
 	public Window() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch(Exception ignored){			
+		} catch (Exception e) {
+			System.out.println("Couldn't load 'Look and Feel' UI Manager. ");
 		}
 		setSize(790, 280);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -126,16 +127,16 @@ public class Window extends JFrame {
 
 		tabs.add("Register", register);
 		tabs.add("List", tablePanel);
-		//tabs.add("Maps", new JLabel("https://github.com/hoereth/google-static-map-creator"));			
+		// tabs.add("Maps", new
+		// JLabel("https://github.com/hoereth/google-static-map-creator"));
 		this.add(tabs);
 		setVisible(true);
-		
 	}
 
 	public Input getNameInput() {
 		return nameInput;
 	}
-	
+
 	public Input getStreetInput() {
 		return streetInput;
 	}
@@ -154,7 +155,7 @@ public class Window extends JFrame {
 
 	public List<String> getCheckedboxes() {
 		for (java.awt.Component child : carPlug.getComponents()) { // Get all components from carPlug panel
-			if (child instanceof JCheckBox) { // Get all JCheckbox instances from specified panel (carPlug) 
+			if (child instanceof JCheckBox) { // Get all JCheckbox instances from specified panel (carPlug)
 				JCheckBox checkBox = (JCheckBox) child;
 				if (checkBox.isSelected()) {
 					checkedBoxes.add(checkBox.getText());
@@ -171,8 +172,8 @@ public class Window extends JFrame {
 	public StarRater getRating() {
 		return rating;
 	}
-	
-	public void cleanData(){
+
+	public void cleanData() {
 		nameInput.setText("");
 		streetInput.setText("");
 		neighborhoodInput.setText("");
@@ -191,11 +192,10 @@ public class Window extends JFrame {
 		List<EletricStation> list = new StationDao().showAll();
 		list.forEach(station -> tableModel.addRow(station.getData()));
 	}
-	
+
 	public void loadDataOrdered() {
 		tableModel.setRowCount(0);
 		List<EletricStation> list = new StationDao().orderByStates();
 		list.forEach(station -> tableModel.addRow(station.getData()));
 	}
-	
 }

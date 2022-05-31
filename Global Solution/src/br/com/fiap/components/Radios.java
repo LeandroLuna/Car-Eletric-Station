@@ -8,36 +8,33 @@ import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-public class Radios extends JPanel{
+public class Radios extends JPanel {
 	private static final long serialVersionUID = 1L;
 	private ButtonGroup group = new ButtonGroup();
 	private List<String> options;
 
-	
 	public Radios(List<String> options) {
 		this.options = options;
 		init();
 	}
 
 	private void init() {
-		// Arrow function
 		options.forEach(option -> {
 			JRadioButton radio = new JRadioButton(option);
 			this.group.add(radio);
 			this.add(radio);
 		});
 	}
-	
-	public String getSelectedButtonText( ) {
-        for (Enumeration<AbstractButton> buttons = this.group.getElements(); buttons.hasMoreElements();) {
-            AbstractButton button = buttons.nextElement();
 
-            if (button.isSelected()) {
-                return button.getText();
-            }
-        }
+	public String getSelectedButtonText() {
+		for (Enumeration<AbstractButton> buttons = this.group.getElements(); buttons.hasMoreElements();) {
+			AbstractButton button = buttons.nextElement();
 
-        return null;
-    }
-	
+			if (button.isSelected()) {
+				return button.getText();
+			}
+		}
+
+		return null;
+	}
 }
