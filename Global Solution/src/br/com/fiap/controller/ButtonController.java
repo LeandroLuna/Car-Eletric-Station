@@ -11,6 +11,7 @@ import br.com.fiap.views.Window;
 
 public class ButtonController implements ActionListener {
 	StationDao dao = new StationDao();
+
 	private Window window;
 
 	public ButtonController(Window window) {
@@ -19,7 +20,7 @@ public class ButtonController implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand() == "Save") {
+		if(e.getActionCommand() == "Save") {
 			EletricStation station = new EletricStation();
 			station.setStationName(window.getNameInput().getText());
 			station.setStreet(window.getStreetInput().getText());
@@ -31,13 +32,13 @@ public class ButtonController implements ActionListener {
 			station.setRating(window.getRating().getSelection());
 			dao.insert(station);
 			window.loadData();
-			JOptionPane.showMessageDialog(null, "Successfully saved!");
-		}
-		if (e.getActionCommand() == "Cancel") {
+			JOptionPane.showMessageDialog(null, "Successfully saved!");		
+			}
+		if(e.getActionCommand() == "Cancel") {
 			window.cleanData();
 		}
-		if (e.getActionCommand() == "Order") {
+		if(e.getActionCommand() == "Order") {
 			window.loadDataOrdered();
 		}
-	}
+	}	
 }
