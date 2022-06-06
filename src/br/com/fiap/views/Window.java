@@ -2,14 +2,20 @@ package br.com.fiap.views;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.image.BufferedImage;
+import java.io.IOException; // Precisa colocar tanto na View.java, quanto no App.java. Não estamos manipulando erros - e nem manipularemos LOL. 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -27,10 +33,14 @@ import br.com.fiap.model.EletricStation;
 
 public class Window extends JFrame {
 	private static final long serialVersionUID = 1L;
+	// Register main panel
 	JPanel register = new JPanel(new GridLayout(0, 3));
 
+	// Instance to include tabs in application itself
 	JTabbedPane tabs = new JTabbedPane();
+	JPanel tablePanel = new JPanel(new BorderLayout());
 
+	// Left panel for register tab
 	JPanel address = new JPanel(new GridLayout(0, 1));
 	Label name = new Label("Station name: ");
 	Input nameInput = new Input();
@@ -45,6 +55,7 @@ public class Window extends JFrame {
 			"PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO", };
 	JComboBox<String> statesSelector = new JComboBox<>(statesArr);
 
+	// Middle panel for register tab
 	JPanel carPlug = new JPanel(new GridLayout(0, 1));
 	JCheckBox type1 = new JCheckBox("type1");
 	JCheckBox type2 = new JCheckBox("type2");
@@ -52,36 +63,46 @@ public class Window extends JFrame {
 	JCheckBox chaDeMo = new JCheckBox("CHAdeMO");
 	List<String> checkedBoxes = new ArrayList<String>();
 
+	// Right panel for register tab
 	JPanel others = new JPanel(new GridLayout(0, 1));
 	Label priceKwh = new Label("Price kWh");
 	Input priceKwhInput = new Input();
 	Label ratingLabel = new Label("Rating");
 	StarRater rating = new StarRater();
 
+	// Buttons
 	JPanel buttons = new JPanel();
 	JButton save = new JButton("Save");
 	JButton cancel = new JButton("Cancel");
-
 	ButtonController buttonController = new ButtonController(this);
+
+	// Table
 	String[] columns = { "Id", "StationName", "Street", "Neighborhood", "City", "State", "Plug", "PriceKwh", "Rating" };
 	DefaultTableModel tableModel = new DefaultTableModel(columns, 0);
 	JTable table = new JTable(tableModel);
 	TableController tableController = new TableController(this);
-	 
-	JPanel tablePanel = new JPanel(new BorderLayout());
 	JButton orderStates = new JButton("Order by states!");
-	
+
+	// Maps API
+	JPanel maps = new JPanel();
+	JLabel mapsIcon = new JLabel();
+	private String API_KEY = "AIzaSyC6IoKPG8jv0mVydkz6TUGNlPYs7Uw1WjY";
+	private String location = "Lins de Vasconcelos, 1222".replaceAll(" ", "+");
+	private String rawUrl = String.format(
+			"https://maps.googleapis.com/maps/api/staticmap?center=%s&zoom=16&scale=false&size=300x200&maptype=roadmap&key=%s&format=png&visual_refresh=true",
+			location, API_KEY);
+
 	public Window() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch(Exception ignored){			
+		} catch (Exception ignored) {
 		}
 		setSize(790, 280);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setTitle("Cars Eletric Station");
 	}
 
-	public void init() {
+	public void init() throws IOException {
 		register.setBorder(BorderFactory.createTitledBorder("Eletric Station Register"));
 		address.setBorder(BorderFactory.createTitledBorder("Info"));
 		address.add(name);
@@ -126,16 +147,23 @@ public class Window extends JFrame {
 
 		tabs.add("Register", register);
 		tabs.add("List", tablePanel);
-		//tabs.add("Maps", new JLabel("https://github.com/hoereth/google-static-map-creator"));			
+
+		// Mapa
+		URL url = new URL(rawUrl);
+		BufferedImage image = ImageIO.read(url);
+		mapsIcon.setIcon(new ImageIcon(image));
+		maps.add(mapsIcon);
+
+		tabs.add("Maps", maps);
 		this.add(tabs);
 		setVisible(true);
-		
+
 	}
 
 	public Input getNameInput() {
 		return nameInput;
 	}
-	
+
 	public Input getStreetInput() {
 		return streetInput;
 	}
@@ -154,7 +182,7 @@ public class Window extends JFrame {
 
 	public List<String> getCheckedboxes() {
 		for (java.awt.Component child : carPlug.getComponents()) { // Get all components from carPlug panel
-			if (child instanceof JCheckBox) { // Get all JCheckbox instances from specified panel (carPlug) 
+			if (child instanceof JCheckBox) { // Get all JCheckbox instances from specified panel (carPlug)
 				JCheckBox checkBox = (JCheckBox) child;
 				if (checkBox.isSelected()) {
 					checkedBoxes.add(checkBox.getText());
@@ -171,8 +199,8 @@ public class Window extends JFrame {
 	public StarRater getRating() {
 		return rating;
 	}
-	
-	public void cleanData(){
+
+	public void cleanData() {
 		nameInput.setText("");
 		streetInput.setText("");
 		neighborhoodInput.setText("");
@@ -191,11 +219,11 @@ public class Window extends JFrame {
 		List<EletricStation> list = new StationDao().showAll();
 		list.forEach(station -> tableModel.addRow(station.getData()));
 	}
-	
+
 	public void loadDataOrdered() {
 		tableModel.setRowCount(0);
 		List<EletricStation> list = new StationDao().orderByStates();
 		list.forEach(station -> tableModel.addRow(station.getData()));
 	}
-	
+
 }
