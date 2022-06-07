@@ -2,8 +2,11 @@ package br.com.fiap.views;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException; // Precisa colocar tanto na View.java, quanto no App.java. Não estamos manipulando erros - e nem manipularemos LOL. 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +55,7 @@ public class Window extends JFrame {
 	Input cityInput = new Input();
 	Label state = new Label("State");
 	String[] statesArr = { "Pick one", "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MS", "MT", "PA",
-			"PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO", };
+			"PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO" };
 	JComboBox<String> statesSelector = new JComboBox<>(statesArr);
 
 	// Middle panel for register tab
@@ -87,10 +90,11 @@ public class Window extends JFrame {
 	JPanel maps = new JPanel();
 	JLabel mapsIcon = new JLabel();
 	private String API_KEY = "AIzaSyC6IoKPG8jv0mVydkz6TUGNlPYs7Uw1WjY";
-	private String location = "Lins de Vasconcelos, 1222".replaceAll(" ", "+");
-	private String rawUrl = String.format(
-			"https://maps.googleapis.com/maps/api/staticmap?center=%s&zoom=16&scale=false&size=300x200&maptype=roadmap&key=%s&format=png&visual_refresh=true",
-			location, API_KEY);
+	JLabel stations = new Label("Stations");
+	String[] databaseStations = { "Select address from dropdown below",
+			"Lins de Vasconcelos, 1222", "Fidêncio Ramos, 308" };
+	JComboBox<String> stationsSelector = new JComboBox<>(databaseStations);
+	URL url;
 
 	public Window() {
 		try {
@@ -149,11 +153,27 @@ public class Window extends JFrame {
 		tabs.add("List", tablePanel);
 
 		// Mapa
-		URL url = new URL(rawUrl);
-		BufferedImage image = ImageIO.read(url);
-		mapsIcon.setIcon(new ImageIcon(image));
+		maps.add(stations);
+		maps.add(stationsSelector);
+		stationsSelector.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (e.getStateChange() == ItemEvent.SELECTED && e.getItem() != databaseStations[0]) {
+					String selectedStationAddress = e.getItem().toString().replaceAll(" ", "+");
+					String rawUrl = String.format(
+							"https://maps.googleapis.com/maps/api/staticmap?center=%s&zoom=16&scale=false&size=300x200&maptype=roadmap&key=%s&format=png&visual_refresh=true",
+							selectedStationAddress, API_KEY);
+					try {
+						url = new URL(rawUrl);
+						BufferedImage image = ImageIO.read(url);
+						mapsIcon.setIcon(new ImageIcon(image));
+					} catch (IOException error) {
+						System.out.printf("Error creating new icon from giving url:", error);
+					}
+				}
+			}
+		});
 		maps.add(mapsIcon);
-
 		tabs.add("Maps", maps);
 		this.add(tabs);
 		setVisible(true);
@@ -225,5 +245,4 @@ public class Window extends JFrame {
 		List<EletricStation> list = new StationDao().orderByStates();
 		list.forEach(station -> tableModel.addRow(station.getData()));
 	}
-
 }
