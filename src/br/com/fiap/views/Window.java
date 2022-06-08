@@ -2,18 +2,11 @@ package br.com.fiap.views;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.image.BufferedImage;
 import java.io.IOException; // Precisa colocar tanto na View.java, quanto no App.java. Não estamos manipulando erros - e nem manipularemos LOL. 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -30,6 +23,7 @@ import br.com.fiap.components.Input;
 import br.com.fiap.components.Label;
 import br.com.fiap.components.StarRater;
 import br.com.fiap.controller.ButtonController;
+import br.com.fiap.controller.MapsController;
 import br.com.fiap.controller.TableController;
 import br.com.fiap.dao.StationDao;
 import br.com.fiap.model.EletricStation;
@@ -88,13 +82,9 @@ public class Window extends JFrame {
 
 	// Maps API
 	JPanel maps = new JPanel();
-	JLabel mapsIcon = new JLabel();
-	private String API_KEY = "AIzaSyC6IoKPG8jv0mVydkz6TUGNlPYs7Uw1WjY";
+	MapsController mapsController = new MapsController();
 	JLabel stations = new Label("Stations");
-	String[] databaseStations = { "Select address from dropdown below",
-			"Lins de Vasconcelos, 1222", "Fidêncio Ramos, 308" };
-	JComboBox<String> stationsSelector = new JComboBox<>(databaseStations);
-	URL url;
+	JComboBox<String> stationsSelector = new JComboBox<>(mapsController.getDatabaseStations());
 
 	public Window() {
 		try {
@@ -155,29 +145,11 @@ public class Window extends JFrame {
 		// Mapa
 		maps.add(stations);
 		maps.add(stationsSelector);
-		stationsSelector.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (e.getStateChange() == ItemEvent.SELECTED && e.getItem() != databaseStations[0]) {
-					String selectedStationAddress = e.getItem().toString().replaceAll(" ", "+");
-					String rawUrl = String.format(
-							"https://maps.googleapis.com/maps/api/staticmap?center=%s&zoom=16&scale=false&size=300x200&maptype=roadmap&key=%s&format=png&visual_refresh=true",
-							selectedStationAddress, API_KEY);
-					try {
-						url = new URL(rawUrl);
-						BufferedImage image = ImageIO.read(url);
-						mapsIcon.setIcon(new ImageIcon(image));
-					} catch (IOException error) {
-						System.out.printf("Error creating new icon from giving url:", error);
-					}
-				}
-			}
-		});
-		maps.add(mapsIcon);
+		stationsSelector.addItemListener(mapsController);
+		maps.add(mapsController.getMapsIcon());
 		tabs.add("Maps", maps);
 		this.add(tabs);
 		setVisible(true);
-
 	}
 
 	public Input getNameInput() {
@@ -238,6 +210,9 @@ public class Window extends JFrame {
 		tableModel.setRowCount(0);
 		List<EletricStation> list = new StationDao().showAll();
 		list.forEach(station -> tableModel.addRow(station.getData()));
+		ArrayList<String> mapsAddress = new ArrayList<String>();
+		list.forEach(station -> mapsAddress.add(station.getData().get(2)));
+		mapsController.setMapsAddressTest(mapsAddress);
 	}
 
 	public void loadDataOrdered() {

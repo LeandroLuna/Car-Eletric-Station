@@ -33,7 +33,7 @@
     	<groupId>de.pentabyte</groupId>
     	<artifactId>google-static-map-creator</artifactId>
    	    <version>2.3.0</version>
-	</dependency>
+	</dependency>  
   </dependencies>
 </project>
 
