@@ -13,17 +13,14 @@ import javax.swing.JLabel;
 
 public class MapsController implements ItemListener {
     private String API_KEY = "AIzaSyC6IoKPG8jv0mVydkz6TUGNlPYs7Uw1WjY";
-    private String[] databaseStations = { "Select address from dropdown below", "Lins de Vasconcelos, 1222",
-            "Fidêncio Ramos, 308" };
+    private String[] databaseStations = { "Nothing to show here yet! Register some stations in system." }; // Initial
+                                                                                                           // value
     JLabel mapsIcon = new JLabel();
-    ArrayList<String> mapsAddressTest = new ArrayList<String>();
 
-    public ArrayList<String> getMapsAddressTest() {
-        return mapsAddressTest;
-    }
-
-    public void setMapsAddressTest(ArrayList<String> mapsAddressTest) {
-        this.mapsAddressTest = mapsAddressTest;
+    public void setDatabaseStations(ArrayList<String> mapsAddress) {
+        databaseStations = null; // Clean array.
+        this.databaseStations = mapsAddress.toArray(new String[mapsAddress.size()]); // Creates an array from a string
+                                                                                     // list.
     }
 
     public JLabel getMapsIcon() {
@@ -32,10 +29,6 @@ public class MapsController implements ItemListener {
 
     public String[] getDatabaseStations() {
         return databaseStations;
-    }
-
-    public void setDatabaseStations(String[] databaseStations) {
-        this.databaseStations = databaseStations;
     }
 
     @Override

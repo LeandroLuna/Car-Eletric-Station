@@ -210,9 +210,16 @@ public class Window extends JFrame {
 		tableModel.setRowCount(0);
 		List<EletricStation> list = new StationDao().showAll();
 		list.forEach(station -> tableModel.addRow(station.getData()));
+
+		// Maps logic
 		ArrayList<String> mapsAddress = new ArrayList<String>();
+		mapsAddress.add("Select an address: ");
 		list.forEach(station -> mapsAddress.add(station.getData().get(2)));
-		mapsController.setMapsAddressTest(mapsAddress);
+		mapsController.setDatabaseStations(mapsAddress);
+		stationsSelector.removeAllItems(); // Clean selector
+		for (String address : mapsController.getDatabaseStations()) {
+			stationsSelector.addItem(address); // Update new values to selector based in database
+		}
 	}
 
 	public void loadDataOrdered() {
