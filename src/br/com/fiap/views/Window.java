@@ -84,7 +84,9 @@ public class Window extends JFrame {
 	JPanel maps = new JPanel();
 	MapsController mapsController = new MapsController();
 	JLabel stations = new Label("Stations");
-	JComboBox<String> stationsSelector = new JComboBox<>(mapsController.getDatabaseStations());
+	private String[] mapsAddressInitialValue = { "Nothing to show here yet! Register some stations in system." }; // Initial
+	// value for maps list
+	JComboBox<String> stationsSelector = new JComboBox<>(mapsAddressInitialValue);
 
 	public Window() {
 		try {
@@ -212,14 +214,9 @@ public class Window extends JFrame {
 		list.forEach(station -> tableModel.addRow(station.getData()));
 
 		// Maps logic
-		ArrayList<String> mapsAddress = new ArrayList<String>();
-		mapsAddress.add("Select an address: ");
-		list.forEach(station -> mapsAddress.add(station.getData().get(2)));
-		mapsController.setDatabaseStations(mapsAddress);
 		stationsSelector.removeAllItems(); // Clean selector
-		for (String address : mapsController.getDatabaseStations()) {
-			stationsSelector.addItem(address); // Update new values to selector based in database
-		}
+		stationsSelector.addItem("Select an address:");
+		list.forEach(station -> stationsSelector.addItem(station.getData().get(2)));
 	}
 
 	public void loadDataOrdered() {
